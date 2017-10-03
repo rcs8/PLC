@@ -52,3 +52,29 @@ push (Pilha p) value = (Pilha (value:p))
 pop :: Pilha t -> Pilha t
 pop Vazia = Vazia
 pop (Pilha (x:xs)) = (Pilha xs)
+
+-- Quest 4
+
+data Arv t = VaziaT | Arv t (Arv t) (Arv t) deriving (Show, Eq, Read)
+
+insert :: (Ord t) => Arv t -> t -> Arv t
+insert VaziaT val = Arv val VaziaT VaziaT
+insert (Arv n l r) val
+ | n == val = Arv val l r
+ | val < n = Arv n (insert l val) r			
+ | otherwise = Arv n l (insert r val)
+ 
+arvLista :: Arv t -> [t]
+arvLista VaziaT = []
+arvLista (Arv n l r) = arvLista l ++ [n] ++ arvLista r
+
+sumLista :: Num t => Arv t -> Int
+sumLista arv = sum (arvLista arv)
+
+sumLista1 :: Num t => Arv t -> Int
+sumLista1 VaziaT = 0
+sumLista1 (Arv n l r) = n + (sumLista1 l) + (sumLista1 r)
+ 
+listArv :: Ord t => [t] -> Arv t
+listArv [] = VaziaT
+listArv l@(x:xs) = Arv x (listArv (filter (<x) xs)) (listArv (filter (>x) xs))
